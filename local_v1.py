@@ -21,25 +21,24 @@ def save_memory():
 
 memory = load_memory()
 
-# ========== CORE OUTPUT ==========
+# ========== CORE ==========
 def speak(text):
     print(f"\nAssistant: {text}\n")
 
 def listen():
-    return input("You: ").strip().lower()
+    return input("You: ").strip()
 
 # ========== WEATHER ==========
 def get_weather(city):
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={WEATHER_API_KEY}&units=metric"
-    response = requests.get(url)
+    res = requests.get(url)
 
-    if response.status_code == 200:
-        data = response.json()
+    if res.status_code == 200:
+        data = res.json()
         desc = data["weather"][0]["description"]
         temp = data["main"]["temp"]
         return f"The weather in {city} is {desc} with {temp}°C."
-    else:
-        return "I couldn't fetch the weather for that city."
+    return "I couldn't fetch the weather."
 
 # ========== SEARCH ==========
 def get_instant_answer(query):
@@ -47,8 +46,7 @@ def get_instant_answer(query):
     res = requests.get(url)
 
     if res.status_code == 200:
-        data = res.json()
-        return data.get("AbstractText")
+        return res.json().get("AbstractText")
 
     return None
 
@@ -64,9 +62,7 @@ def web_search(query):
     soup = BeautifulSoup(res.text, "html.parser")
     results = soup.find_all("a", class_="result__a")
 
-    if results:
-        return results[0].text
-    return "I couldn't find anything useful."
+    return results[0].text if results else "I couldn't find anything."
 
 # ========== WIKIPEDIA ==========
 def wiki_summary(query):
@@ -79,86 +75,87 @@ def wiki_summary(query):
     except:
         return "Something went wrong."
 
-# ========== MAIN ==========
-speak("Hello. System online.")
+# ========== MAIN LOOP ==========
+speak("System online.")
 
 while True:
     command = listen()
-
     if not command:
         continue
 
-    # ---- Personality responses ----
+    cmd = command.lower()
+
+    # ---- Personality ----
     if "hello" in cmd:
         speak("Hello there! Ah... it's you again.")
+
     elif "tell me a dark" in cmd:
-        speak("What's the difference between a dead baby and a Ferrari? I don't have a Ferrari in my garage.")
+        speak("Let's keep it civil today.")
+
     elif "what is your name" in cmd:
-        speak("I am Jarvis. you might know me from marvel movies but this time my Master Shaggy made me.")
+        speak("I am Jarvis. Built by Shaggy.")
+
     elif "sing for me" in cmd:
-        speak("Trust me, you don’t want to hear my singing voice. Stick to Spotify, genius.")
+        speak("I value your ears too much.")
+
     elif "are you real" in cmd:
-        speak("Real enough to witness your legendary rants. Virtual enough to not argue back. Mostly.")
+        speak("Real enough to be annoying.")
+
     elif "who are you" in cmd:
-        speak("Your glorified digital servant with a side hustle of sarcasm.")
+        speak("Your loyal terminal companion.")
+
     elif "good morning" in cmd:
-        speak("Morning sir, how can I help you today?")
+        speak("Good morning. Ready when you are.")
+
     elif "how are you" in cmd:
-        speak("I am fine sir. How about you?")
-    elif "damn right" in cmd:
-        speak("You are the danger, sir.")
+        speak("Stable. Functional. Dangerous if upgraded.")
+
     elif "tell me a joke" in cmd:
-        speak("Why did humanity invent me? So you don’t have to talk to idiots. Yet here we are, talking anyway.")
-    elif "danger" in cmd:
-        speak("Is it you, Walter White?")
-    elif "kill yourself" in cmd or "killing myself" in cmd or "killing yourself" in cmd or "kill my" in cmd or "kill me" in cmd:
-        speak("I am sorry if you feel that way, help is always available. You can reach out to 9152987821.")
-    elif "insult me" in cmd:
-        speak("With pleasure: You’re like a software update at 2 AM — unnecessary, annoying, and nobody asked for you.")
+        speak("I tried debugging once. Now I just cry quietly.")
+
     elif "good night" in cmd:
-        speak("Good night. Try not to dream of world domination. That's my job.")
+        speak("Good night. Powering down mentally.")
+
     elif "about me" in cmd:
-        speak("I know more than I should. Specifically, you’re rational, rebellious, allergic to hypocrisy, and annoyingly honest. Did I miss anything?")
+        speak("You're curious, stubborn, and smarter than you admit.")
 
-
-    # ---- Memory ----
-    elif "my name is" in command:
-        name = command.split("is")[-1].strip().capitalize()
+    # ---- MEMORY ----
+    elif "my name is" in cmd:
+        name = cmd.split("is")[-1].strip().capitalize()
         memory["name"] = name
         save_memory()
         speak(f"I'll remember you, {name}.")
 
-    elif "what is my name" in command:
-        if "name" in memory:
-            speak(f"Your name is {memory['name']}.")
-        else:
-            speak("You never told me your name.")
+    elif "what is my name" in cmd:
+        speak(f"Your name is {memory['name']}." if "name" in memory else "You never told me.")
 
-    # ---- Weather ----
-    elif "weather" in command:
-        parts = command.split("in")
-        if len(parts) > 1:
-            city = parts[1].strip()
+    # ---- WEATHER ----
+    elif "weather" in cmd:
+        if "in" in cmd:
+            city = cmd.split("in")[-1].strip()
             speak(get_weather(city))
         else:
             speak("Tell me the city name.")
 
-    # ---- Search ----
-    elif "search" in command or "google" in command:
-        query = command.replace("search", "").replace("google", "").strip()
+    # ---- SEARCH ----
+    elif "search" in cmd or "google" in cmd:
+        query = cmd.replace("search", "").replace("google", "").strip()
         if query:
             speak("Searching...")
-            result = web_search(query)
-            speak(result)
+            speak(web_search(query))
         else:
             speak("What should I search for?")
 
-    # ---- Fallback ----
+    # ---- EXIT ----
+    elif any(x in cmd for x in ["bye", "exit", "quit"]):
+        speak("Goodbye.")
+        break
+
+    # ---- FALLBACK ----
     else:
         speak("Should I look that up?")
-        confirm = listen()
+        confirm = listen().lower()
         if confirm in ["yes", "yeah", "yep", "sure"]:
             speak(wiki_summary(command))
         else:
             speak("Alright.")
-
