@@ -86,38 +86,37 @@ while True:
     cmd = command.lower()
 
     # ---- Personality ----
-    if "hello" in cmd:
+ if "hello" in cmd:
         speak("Hello there! Ah... it's you again.")
-
     elif "tell me a dark" in cmd:
-        speak("Let's keep it civil today.")
-
+        speak("What's the difference between a dead baby and a Ferrari? I don't have a Ferrari in my garage.")
     elif "what is your name" in cmd:
-        speak("I am Jarvis. Built by Shaggy.")
-
+        speak("I am Jarvis. you might know me from marvel movies but this time my Master Shaggy made me.")
     elif "sing for me" in cmd:
-        speak("I value your ears too much.")
-
+        speak("Trust me, you don’t want to hear my singing voice. Stick to Spotify, genius.")
     elif "are you real" in cmd:
-        speak("Real enough to be annoying.")
-
+        speak("Real enough to witness your legendary rants. Virtual enough to not argue back. Mostly.")
     elif "who are you" in cmd:
-        speak("Your loyal terminal companion.")
-
+        speak("Your glorified digital servant with a side hustle of sarcasm.")
     elif "good morning" in cmd:
-        speak("Good morning. Ready when you are.")
-
+        speak("Morning sir, how can I help you today?")
     elif "how are you" in cmd:
-        speak("Stable. Functional. Dangerous if upgraded.")
-
+        speak("I am fine sir. How about you?")
+    elif "damn right" in cmd:
+        speak("You are the danger, sir.")
     elif "tell me a joke" in cmd:
-        speak("I tried debugging once. Now I just cry quietly.")
-
+        speak("Why did humanity invent me? So you don’t have to talk to idiots. Yet here we are, talking anyway.")
+    elif "danger" in cmd:
+        speak("Is it you, Walter White?")
+    elif "kill yourself" in cmd or "killing myself" in cmd or "killing yourself" in cmd or "kill my" in cmd or "kill me" in cmd:
+        speak("I am sorry if you feel that way, help is always available. You can reach out to 9152987821.")
+    elif "insult me" in cmd:
+        speak("With pleasure: You’re like a software update at 2 AM — unnecessary, annoying, and nobody asked for you.")
     elif "good night" in cmd:
-        speak("Good night. Powering down mentally.")
-
+        speak("Good night. Try not to dream of world domination. That's my job.")
     elif "about me" in cmd:
-        speak("You're curious, stubborn, and smarter than you admit.")
+        speak("I know more than I should. Specifically, you’re rational, rebellious, allergic to hypocrisy, and annoyingly honest. Did I miss anything?")
+
 
     # ---- MEMORY ----
     elif "my name is" in cmd:
@@ -159,3 +158,4 @@ while True:
             speak(wiki_summary(command))
         else:
             speak("Alright.")
+
